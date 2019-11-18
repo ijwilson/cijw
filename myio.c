@@ -223,14 +223,14 @@ double *readdoublesfromfile(FILE *in, int *len) {
     for (;;) {
         ch = skipspace(in);
         if (isdigit(ch)||ch=='-') {
-	  if (ch!=ungetc(ch,in))
-	    nrerror("Error putting back ch in readdoublesfromfile");
-            if (count==vecsize) {
-                data = (double *)REALLOC(data,(vecsize+1000)*sizeof(double));
-                if (!data)
-                    nrerror("error reallocating data");
-                vecsize +=1000;
-            }
+	    if (ch!=ungetc(ch,in))
+	        nrerror("Error putting back ch in readdoublesfromfile");
+        if (count==vecsize) {
+           data = (double *)REALLOC(data,(vecsize+1000)*sizeof(double));
+           if (!data)
+               nrerror("error reallocating data");
+           vecsize +=1000;
+        }
 	    if (fscanf(in,"%lf",&(data[++count]))!=1)
 	      nrerror("error reading value in readdoublesfromfile");
         } else
@@ -435,8 +435,9 @@ int nextint(FILE *in) {
 char nextchar(FILE *in) {
     int ch;
     ch = skipspace(in);
-    if (ch!=':')
+    if (ch!=':') {
         nrerror("error integer should be preceded by a colon");
+    }
 	ch = skipspace(in);
     return (char)ch;
 }
@@ -454,16 +455,19 @@ int *readintegerline(FILE *in) {
     for (;;) {
         ch = skipblank(in);
         if ((isdigit(ch))||(ch=='-')) {
-	  if (ch!=ungetc(ch,in))
-	    nrerror("error putting back ch in readintegerline");
-            if (count==vecsize) {
-                data = (int *)REALLOC(data,(vecsize+1000)*sizeof(int));
-                if (!data)
-                    nrerror("error reallocating data");
-                vecsize +=1000;
+          if (ch!=ungetc(ch,in)) {
+            nrerror("error putting back ch in readintegerline");
+          }
+          if (count==vecsize) {
+            data = (int *)REALLOC(data,(vecsize+1000)*sizeof(int));
+            if (!data) {
+              nrerror("error reallocating data");
             }
-	    if (fscanf(in,"%d",&(data[++count]))!=1)
-	      nrerror("error reading value in readintegerline");
+            vecsize +=1000;
+          }
+	      if (fscanf(in,"%d",&(data[++count]))!=1) {
+	         nrerror("error reading value in readintegerline");
+          }
         } else
             break;
     }
@@ -581,13 +585,14 @@ int **readintegermatrix(FILE *in,int *rows, int *columns)
     for (;;) {
         ch = (char)skipblank(in);
         if (isdigit(ch)||ch=='-') {
-	  if (ch!=ungetc(ch,in))
-	    nrerror("error putting back ch in readintegermatrix");
-            if (count==vecsize) {
-                data = (int*) REALLOC(data,(vecsize+1000+1)*sizeof(int));
-                if (!data)
-                    nrerror("error reallocating data");
-                vecsize +=1000;
+          if (ch!=ungetc(ch,in)) {
+            nrerror("error putting back ch in readintegermatrix");
+          }
+          if (count==vecsize) {
+             data = (int*) REALLOC(data,(vecsize+1000+1)*sizeof(int));
+             if (!data)
+               nrerror("error reallocating data");
+             vecsize +=1000;
             }
 	    if (fscanf(in,"%d",&(data[++count]))!=1)
 	      nrerror("error reading value in readintegermatrix");
@@ -601,19 +606,21 @@ int **readintegermatrix(FILE *in,int *rows, int *columns)
     for (;;) {
         ch = (char)skipspace(in);
         if (isdigit(ch)||ch=='-') {
-	  if (ch!=ungetc(ch,in))
-	    nrerror("error putting back ch in readintegermatrix");
-            if (count==vecsize) {
-                data = (int*) REALLOC(data,(vecsize+1000+1)*sizeof(int));
-                if (!data)  nrerror("error reallocating data");
-                vecsize +=1000;
-            }
+          if (ch!=ungetc(ch,in)) {
+            nrerror("error putting back ch in readintegermatrix");
+          }
+          if (count==vecsize) {
+            data = (int*) REALLOC(data,(vecsize+1000+1)*sizeof(int));
+            if (!data)  nrerror("error reallocating data");
+            vecsize +=1000;
+          }
 	    if (fscanf(in,"%d",&(data[++count]))!=1)
 	      nrerror("error reading value in readintegermatrix");
         } else {
-	  if (ch!=ungetc(ch,in))
-	    nrerror("error putting back ch in readintegermatrix");
-            break;
+          if (ch!=ungetc(ch,in)) {
+	          nrerror("error putting back ch in readintegermatrix");
+          }
+          break;
         }
     }
 
@@ -693,9 +700,10 @@ int **readcharintegermatrix(FILE *in,int *rows, int *columns)
         } else if (isalpha((int)ch)) {
             data[++count]=(int)ch;
         } else {
-	  if (ch!=ungetc(ch,in))
-	    myerror("error putting back ch in readcharintegermatrix");
-            break;
+          if (ch!=ungetc(ch,in)) {
+            myerror("error putting back ch in readcharintegermatrix");
+          }
+          break;
         }
         if (count==vecsize) {
             data = (int*) REALLOC(data,(vecsize+1000+1)*sizeof(int));
@@ -740,13 +748,14 @@ returns it as an int matrix         */
     for (;;) {
         ch = (char)skipblank(in);
         if (isdigit(ch)||ch=='-') {
-	  if (ch!=ungetc(ch,in))
-	    myerror("error putting back ch in count_columns");
-            count++;
-	    if (fscanf(in,"%d",&tmp)!=1)
-	      myerror("error reading val in count_columns");
+          if (ch!=ungetc(ch,in)) {
+            myerror("error putting back ch in count_columns");
+          }
+          count++;
+          if (fscanf(in,"%d",&tmp)!=1)
+            myerror("error reading val in count_columns");
         } else if (ch=='?') {
-            count++;
+          count++;
         } else if (isalpha((int)ch)) {
             count++;
         } else if ((ch =='\n')||(ch == EOF)) {
@@ -770,18 +779,19 @@ int *readintegervector(FILE *in,int *length) {
     for (;;) {
         ch = skipspace(in);
         if (isdigit(ch)||ch=='-') {
-	  if (ch!=ungetc(ch,in))
-	    myerror("error putting back ch in readintegervector");
-            if (count==vecsize) {
-                data = (int *)REALLOC(data,(vecsize+1000)*sizeof(int));
-                if (!data)
-                    nrerror("error reallocating data");
-                vecsize +=1000;
-            }
-	    if (fscanf(in,"%d",&(data[++count]))!=1)
-	      myerror("error reading val in readintegervector");
+          if (ch!=ungetc(ch,in)) {
+            myerror("error putting back ch in readintegervector");
+          }
+          if (count==vecsize) {
+            data = (int *)REALLOC(data,(vecsize+1000)*sizeof(int));
+            if (!data)
+              nrerror("error reallocating data");
+            vecsize +=1000;
+          }
+          if (fscanf(in,"%d",&(data[++count]))!=1)
+            myerror("error reading val in readintegervector");
         } else
-            break;
+          break;
     }
     data = (int *)REALLOC(data,(count+1)*sizeof(int));
     if (!data)
@@ -853,13 +863,13 @@ int nextname(FILE *in, char *filename)
     for (i=0;i<255;i++) {
       if ((isspace(ch))||ch=='('||ch==EOF) {
 	// if ((isspace(ch))||ch==EOF) {
-	  if (ch!=ungetc(ch,in))
-	    myerror("error putting back ch in nextname");
-            filename[i]='\0';
-            return 1;
-        }
-        filename[i]=(char)ch;
-        ch = getc(in);
+	     if (ch!=ungetc(ch,in))
+	        myerror("error putting back ch in nextname");
+         filename[i]='\0';
+         return 1;
+       }
+       filename[i]=(char)ch;
+       ch = getc(in);
     }
     return 0;
 }
@@ -873,13 +883,14 @@ int nextnameb(FILE *in, char *filename)
     for (i=0;i<255;i++) {
       //    if ((isspace(ch))||ch=='('||ch==EOF) {
 	 if ((isspace(ch))||ch==EOF) {
-	  if (ch!=ungetc(ch,in))
-	    myerror("error putting back ch in nextname");
-            filename[i]='\0';
-            return 1;
-        }
-        filename[i]=(char)ch;
-        ch = getc(in);
+       if (ch!=ungetc(ch,in)) {
+         myerror("error putting back ch in nextname");
+       }
+       filename[i]='\0';
+       return 1;
+     }
+     filename[i]=(char)ch;
+     ch = getc(in);
     }
     return 0;
 }
@@ -1047,10 +1058,11 @@ double *sequence_scan(FILE *input, char *namestring,int *n, char *default_val) {
     int i;
 
     if (findstart(input,namestring)) {
-      if (fscanf(input,": %f %f %f",fd,fd+1,fd+2)!=3)
-	myerror("error readin g3 values in sequence_scan");
-        for (i=0;i<3;i++)
-            d[i]=(double)fd[i];
+      if (fscanf(input,": %f %f %f",fd,fd+1,fd+2)!=3) {
+        myerror("error readin g3 values in sequence_scan");
+      }
+      for (i=0;i<3;i++)
+        d[i]=(double)fd[i];
     } else {
         printf("unable to find sequence %s: using default %s\n",namestring,default_val);
 	if (sscanf(default_val,"%f %f %f",fd,fd+1,fd+2)!=3)
@@ -1092,19 +1104,20 @@ int **readraggedintegerarray(char *filename,int *rows)
         for (;;) {  /* columns  */
             ch = (char)skipblank(in);
             if (isdigit(ch)||ch=='-') {
-	      if (ch!=ungetc(ch,in))
-		nrerror("error putting back ch in readintegermatrix");
-                if (count==vecsize) {
-                    data = (int*) REALLOC(data,(vecsize+1000+1)*sizeof(int));
-                    if (!data)
-                        nrerror("error reallocating data");
-                    vecsize +=1000;
-                }
-		if (fscanf(in,"%d",&(data[++count]))!=1)
-		  nrerror("error reading value in ;readintegermatrix");
-                rowcount++;
+              if (ch!=ungetc(ch,in)) {
+                nrerror("error putting back ch in readintegermatrix");
+              }
+              if (count==vecsize) {
+                data = (int*) REALLOC(data,(vecsize+1000+1)*sizeof(int));
+                if (!data)
+                  nrerror("error reallocating data");
+                vecsize +=1000;
+              }
+              if (fscanf(in,"%d",&(data[++count]))!=1)
+                nrerror("error reading value in ;readintegermatrix");
+              rowcount++;
             } else
-                break;
+              break;
         }
         if (rowcount>0) {
             data[rowstart]=rowcount;
@@ -1163,13 +1176,13 @@ double **readraggeddoublearray(char *filename,int *rows)
             ch = (char)skipblank(in);
             if (isdigit(ch)||ch=='-') {
 	      if (ch!=ungetc(ch,in))
-		nrerror("error putting back value in readraggeddoublearray");
-                if (count==vecsize) {
-                    data = (double*) REALLOC(data,(vecsize+1000+1)*sizeof(double));
-                    if (!data)
-                        nrerror("error reallocating data");
-                    vecsize +=1000;
-                }
+		      nrerror("error putting back value in readraggeddoublearray");
+          if (count==vecsize) {
+             data = (double*) REALLOC(data,(vecsize+1000+1)*sizeof(double));
+             if (!data)
+                 nrerror("error reallocating data");
+          vecsize +=1000;
+        }
 		if (fscanf(in,"%g",&temf)!=1)
 		  nrerror("error reading value in readraggeddoublearray");
 			  ;
